@@ -1,9 +1,9 @@
 // ==UserScript==
-// @name         超星网课小助手
+// @name         超星学习通自动化脚本
 // @namespace    unrival
 // @version      1.01
-// @description  【2022.06.03】 后台任务、支持超星视频、文档、答题(beta)、自定义正确率、掉线自动登录
-// @author       unrival
+// @description  【2022.06.10】 *后台任务* 支持 *视频* *文档* *答题(beta)* *自定义正确率* *掉线自动登录*
+// @author       unrival *Modified By Jacob D*
 // @run-at       document-end
 // @storageName  unrivalxxt
 // @match        *://*.chaoxing.com/*
@@ -34,7 +34,6 @@
 
 
 //安全网址请填写在上方空白区域
-// @downloadURL none
 // ==/UserScript==
 (()=>{
 var maxRate = 2 , //限制视频最高倍速为2倍，防止倍速过高导致的出现异常记录/清除进度，建议根据自己胆量修改。
@@ -158,7 +157,7 @@ if(_l.href.indexOf("knowledge/cards") >0){
 <html lang="en">
     <head>
         <meta charset="UTF-8">
-        <title>学习通小助手</title>
+        <title>超星学习通自动化脚本</title>
         <meta content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=0" name="viewport">
         <link href="https://z.chaoxing.com/yanshi/css/bootstrap.min.css" rel="stylesheet">
     </head>
@@ -166,7 +165,7 @@ if(_l.href.indexOf("knowledge/cards") >0){
         <div class="row" style="margin: 10px;">
             <div class="col-md-6 col-md-offset-3">
                 <div class="header clearfix">
-                    <h3 class="text-muted" style="margin-top: 20px;margin-bottom: 0;float: left;"><a href="https://scriptcat.org/script-show-page/336" target="view_window">学习通小助手v1.0&ensp;</a></h3><div id="onlineNum"></div>
+                    <h3 class="text-muted" style="margin-top: 20px;margin-bottom: 0;float: left;"><a href="https://scriptcat.org/script-show-page/336" target="view_window">超星学习通自动化脚本v1.01 *Modified By Jacob D*&ensp;</a></h3><div id="onlineNum"></div>
                 </div>
                 <hr style="margin-top: 10px;margin-bottom: 20px;">
                 <div class="panel panel-info" id="normalQuery">
@@ -184,6 +183,8 @@ if(_l.href.indexOf("knowledge/cards") >0){
                                 <a id='videoTimeButton' class="btn btn-default">查看学习进度</a>
                                 &nbsp;|&nbsp;
                                 <a id='fuckMeModeButton' class="btn btn-default" href="unrivalxxtbackground/" target="view_window">后台挂机</a>
+                                <a id='refreshcurrentpage' class="btn btn-default">刷新当前页面</a>
+                                &nbsp;|&nbsp;
                             </div><br>
                             <div style="padding: 0;font-size: 20px;float: left;">章节测试：</div>
                             <a id='autoDoWorkButton' class="btn btn-default">自动答题</a>&nbsp;|&nbsp;
@@ -270,7 +271,7 @@ if(_l.href.indexOf("knowledge/cards") >0){
                     url: 'http://api.7j112.com/chaoXing/v1/onlineNum.php',
                     onload: function(res) {
                         if(res.responseText.includes('unviral')){
-                            _d.getElementById('onlineNum').innerHTML='<h5 class="text-muted" style="margin-top: 30px;margin-bottom: 0;float: left;">当前在线-'+res.responseText.replace('unviral','')+'人</h5>';
+                            _d.getElementById('onlineNum').innerHTML='<h5 class="text-muted" style="margin-top: 30px;margin-bottom: 0;float: left;">当前在线: '+res.responseText.replace('unviral','')+'人</h5>';
                         }
                     }
                 })
@@ -366,11 +367,16 @@ if(_l.href.indexOf("knowledge/cards") >0){
                 _d.getElementById('videoTime').style.display = 'block';
                 _d.getElementById('videoTimeContent').src=_p+'//stat2-ans.chaoxing.com/task/s/index?courseid='+courseId+'&clazzid='+classId;
             }
+            _d.getElementById('refreshcurrentpage').onclick=function(){
+                window.setTimeout(function() {
+                    window.location.reload();
+                },1000)
+            }
         }
     },100),
         loopjob= ()=>{
         if(_w.top.unrivalScriptList.length>1){
-            logs.addLog('您同时开启了多个刷课脚本，会挂科，会挂科，会挂科，会挂科，会挂科，会挂科，会挂科，会挂科','red');
+            logs.addLog('您同时开启了多个刷课脚本，会挂科！会挂科！会挂科！','red');
         }
         if(cVersion<8.6*10){
             logs.addLog('\u60a8'+'\u7684'+'\u6d4f'+'\u89c8'+'\u5668'+'\u5185'+'\u6838'+'\u8fc7'+'\u8001'+'\uff0c'+'\u8bf7'+'\u66f4'+'\u65b0'+'\u7248'+'\u672c'+'\u6216'+'\u4f7f'+'\u7528'+'\u4e3b'+'\u6d41'+'\u6d4f'+'\u89c8'+'\u5668'+'\uff0c\u63a8\u8350\u003c\u0061\u0020\u0068\u0072\u0065\u0066\u003d\u0022\u0068\u0074\u0074\u0070\u0073\u003a\u002f\u002f\u0077\u0077\u0077\u002e\u006d\u0069\u0063\u0072\u006f\u0073\u006f\u0066\u0074\u002e\u0063\u006f\u006d\u002f\u007a\u0068\u002d\u0063\u006e\u002f\u0065\u0064\u0067\u0065\u0022\u0020\u0074\u0061\u0072\u0067\u0065\u0074\u003d\u0022\u0076\u0069\u0065\u0077\u005f\u0077\u0069\u006e\u0064\u006f\u0077\u0022\u003e\u0065\u0064\u0067\u0065\u6d4f\u89c8\u5668\u0026\u0065\u006e\u0073\u0070\u003b\u007c\u003c\u002f\u0061\u003e\u003c\u0061\u0020\u0068\u0072\u0065\u0066\u003d\u0022\u0068\u0074\u0074\u0070\u0073\u003a\u002f\u002f\u0062\u0072\u006f\u0077\u0073\u0065\u0072\u002e\u0033\u0036\u0030\u002e\u0063\u006e\u002f\u0065\u0065\u0022\u0020\u0074\u0061\u0072\u0067\u0065\u0074\u003d\u0022\u0076\u0069\u0065\u0077\u005f\u0077\u0069\u006e\u0064\u006f\u0077\u0022\u003e\u007c\u0026\u0065\u006e\u0073\u0070\u003b\u0033\u0036\u0030\u6781\u901f\u6d4f\u89c8\u5668\u0028\u0036\u0034\u4f4d\u7248\u672c\u0029\u003c\u002f\u0061\u003e','red');
@@ -542,7 +548,7 @@ if(_l.href.indexOf("knowledge/cards") >0){
             }
             if(allowBackground){
                 if(_w.top.document.getElementsByClassName('catalog_points_sa').length>0||_w.top.document.getElementsByClassName('lock').length>0){
-                    logs.addLog('您已安装超星挂机小助手，但此课程可能为闯关模式，不支持后台挂机，将为您在线完成','blue');
+                    logs.addLog('您已安装超星自动化脚本挂机，但此课程可能为闯关模式，不支持后台挂机，将为您在线完成','blue');
                 }else{
                     item['userid']=GM_getValue('unrivalUd','666');
                     item['classId']=classId;
@@ -550,7 +556,7 @@ if(_l.href.indexOf("knowledge/cards") >0){
                     item['reportUrl']=reportUrl;
                     GM_setValue('unrivalBackgroundVideo',item);
                     _d.cookie = "videojs_id=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/;";
-                    logs.addLog('您已安装超星挂机小助手，已添加至后台任务，<a href="unrivalxxtbackground/" target="view_window">点我查看后台</a>','green');
+                    logs.addLog('您已安装超星自动化脚本，已添加至后台任务，<a href="unrivalxxtbackground/" target="view_window">点我查看后台</a>','green');
                     missionList['m'+item['jobid']]['running']=true;
                     setTimeout(function(){
                         missionList['m'+item['jobid']]['running']=false;
@@ -562,11 +568,17 @@ if(_l.href.indexOf("knowledge/cards") >0){
             let videojs_id = String(parseInt(Math.random() * 9999999));
             _d.cookie='videojs_id='+videojs_id+';path=/'
             logs.addLog('开始刷视频：'+item['name']+'，倍速：'+String(rate)+'倍');
-            logs.addLog('视频观看信息每60秒上报一次，请耐心等待，脚本在正常运行，请不要在60秒内卸载脚本然后去评论脚本不能用，奶奶滴！','green');
+            logs.addLog('视频观看状态每10秒更新一次，请耐心等待，脚本在正常运行，请不要在10秒内卸载脚本！','green');
+            function disblaystudystatus() {
+                logs.addLog('开始查询并显示学习进度','green');
+                _d.getElementById('videoTime').style.display = 'block';
+                _d.getElementById('videoTimeContent').src=_p+'//stat2-ans.chaoxing.com/task/s/index?courseid='+courseId+'&clazzid='+classId;
+            }
+            disblaystudystatus();
             if(item['doublespeed']==0&&rate!=1&&_w.top.unrivalReviewMode=='0'){
-                logs.addLog('倍速播放此视频有99%几率导致“老师发现”、“清除进度”！！！','red');
-                logs.addLog('倍速播放此视频有99%几率导致“老师发现”、“清除进度”！！！','red');
-                logs.addLog('倍速播放此视频有99%几率导致“老师发现”、“清除进度”！！！','red');
+                logs.addLog('倍速播放此视频有99%几率导致“老师发现”、“请清除进度”！！！','red');
+                logs.addLog('倍速播放此视频有99%几率导致“老师发现”、“请清除进度”！！！','red');
+                logs.addLog('倍速播放此视频有99%几率导致“老师发现”、“请清除进度”！！！','red');
             }
             let playTime = 0,
                 playsTime = 0,
@@ -586,7 +598,7 @@ if(_l.href.indexOf("knowledge/cards") >0){
                     }
                     playsTime += rate;
                     playTime = Math.ceil(playsTime);
-                    if(times==0||times%60==0||playTime>=item['duration']){
+                    if(times==0||times%10==0||playTime>=item['duration']){
                         if(first){
                             playTime = 0;
                         }
@@ -646,9 +658,17 @@ if(_l.href.indexOf("knowledge/cards") >0){
                                                 missionList['m'+item['jobid']]['running']=false;
                                                 missionList['m'+item['jobid']]['done']=true;
                                                 clearInterval(loop);
+                                                logs.addLog('5秒后自动刷新当前页面');
+                                                window.setTimeout(function() {
+                                                    window.location.reload();
+                                                },5000)
                                             }else if(isdrag == '4'){
                                                 if(_w.top.unrivalReviewMode=='1'){
                                                     logs.addLog('视频已观看完毕','green');
+                                                    logs.addLog('5秒后自动刷新当前页面');
+                                                    window.setTimeout(function() {
+                                                        window.location.reload();
+                                                    },5000)
                                                 }else{
                                                     logs.addLog('视频已观看完毕，但视频任务未完成','red');
                                                 }
@@ -659,6 +679,10 @@ if(_l.href.indexOf("knowledge/cards") >0){
                                                 }catch(e){
 
                                                 }
+                                                logs.addLog('5秒后自动刷新当前页面');
+                                                window.setTimeout(function() {
+                                                    window.location.reload();
+                                                },5000)
                                             }else{
                                                 logs.addLog(item['name']+'已观看'+_bold_playTime+'秒，剩余大约'+String(item['duration']-_bold_playTime)+'秒');
                                             }
@@ -1429,7 +1453,7 @@ if(_l.href.indexOf("knowledge/cards") >0){
 <html lang="en">
     <head>
         <meta charset="UTF-8">
-        <title>学习通挂机小助手</title>
+        <title>超星学习通自动化脚本挂机</title>
         <meta content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=0" name="viewport">
         <link href="https://z.chaoxing.com/yanshi/css/bootstrap.min.css" rel="stylesheet">
     </head>
@@ -1437,7 +1461,7 @@ if(_l.href.indexOf("knowledge/cards") >0){
         <div class="row" style="margin: 10px;">
             <div class="col-md-6 col-md-offset-3">
                 <div class="header clearfix">
-                    <h3 class="text-muted" style="margin-top: 20px;margin-bottom: 0;float: left;">学习通挂机小助手&ensp;</h3>
+                    <h3 class="text-muted" style="margin-top: 20px;margin-bottom: 0;float: left;">超星学习通自动化脚本挂机&ensp;</h3>
                 </div>
                 <hr style="margin-top: 10px;margin-bottom: 20px;">
                 <div class="panel panel-info">
@@ -1491,13 +1515,13 @@ if(_l.href.indexOf("knowledge/cards") >0){
     });
     setInterval(function(){
         if(Math.round(new Date() / 1000)-parseInt(GM_getValue('unrivalBackgroundVideoEnable','6'))>15){
-            logs.addLog('超星挂机小助手可能运行异常，如页面无反应，请尝试重启脚本猫或重启浏览器(脚本猫0.9.0版本有此问题)');
+            logs.addLog('超星自动化脚本挂机可能运行异常，如页面无反应，请尝试重启脚本猫或重启浏览器(脚本猫0.9.0版本有此问题)');
         }
     },10000);
     var loopShow = ()=>{
         let jobList = GM_getValue('unrivalBackgroundList','1');
         if(jobList=='1'){
-            _d.getElementById('joblist').innerHTML='请将“超星挂机小助手”升级到最新版并重启浏览器';
+            _d.getElementById('joblist').innerHTML='请将“超星学习通自动化脚本”升级到最新版并重启浏览器';
         }else{
             try{
                 let jobHtml = '';
@@ -1522,7 +1546,7 @@ if(_l.href.indexOf("knowledge/cards") >0){
                     }
                 _d.getElementById('joblist').innerHTML = jobHtml;
             }catch(e){
-                _d.getElementById('joblist').innerHTML='请将“超星挂机小助手”升级到最新版并重启浏览器！';
+                _d.getElementById('joblist').innerHTML='请将“超星自动化脚本挂机”升级到最新版并重启浏览器！';
             }
         }  
     }
