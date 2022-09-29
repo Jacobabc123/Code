@@ -620,7 +620,7 @@
 				let videojs_id = String(parseInt(Math.random() * 9999999));
 				_d.cookie = 'videojs_id=' + videojs_id + ';path=/'
 				logs.addLog('开始刷视频：' + item['name'] + '，倍速：' + String(rate) + '倍');
-				logs.addLog('视频观看信息每6秒上报一次，请耐心等待，脚本在正常运行，请不要在60秒内卸载脚本!', 'green');
+				logs.addLog('视频观看信息每6秒上报一次，请耐心等待，脚本在正常运行，请不要在6秒内卸载脚本!', 'green');
 				function disblaystudystatus() {
                      logs.addLog('开始查询并显示学习进度','green');
                      _d.getElementById('videoTime').style.display = 'block';
@@ -768,6 +768,10 @@
 													'done'
 												] = true;
 												clearInterval(loop);
+                                                logs.addLog('5秒后自动刷新当前页面');
+                                                window.setTimeout(function() {
+                                                    window.location.reload();
+                                                },5000)
 											} else if (isdrag == '4') {
 												if (_w.top.unrivalReviewMode ==
 													'1') {
