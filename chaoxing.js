@@ -1,8 +1,8 @@
 // ==UserScript==
 // @name         🐤【超星网课小助手】【支持图片题】视频-章节测试|自动挂机|可多开不占网速|防清进度【用过都说好】
 // @namespace    unrival
-// @version      1.35
-// @description  ▶▶▶上次更新：2022.09.28◀◀◀⚠⚠⚠最近超星更新频繁，强烈建议使用近期更新的最新版脚本，防止出现异常⚠⚠⚠【✅独家题库实时更新】【💻可最小化💻】🆒支持超星视频、文档、答题、自定义正确率、掉线自动登录🤘取消视频文件加载，多开也不占用网速，放心追剧🍊自定义答题正确率，提高学习效率🍆每日功能测试，在发现问题前就解决问题，防清进度，无不良记录 
+// @version      1.36
+// @description  ▶▶▶上次更新：2022.09.30◀◀◀⚠⚠⚠最近超星更新频繁，强烈建议使用近期更新的最新版脚本，防止出现异常⚠⚠⚠【✅独家题库实时更新】【💻可最小化💻】🆒支持超星视频、文档、答题、自定义正确率、掉线自动登录🤘取消视频文件加载，多开也不占用网速，放心追剧🍊自定义答题正确率，提高学习效率🍆每日功能测试，在发现问题前就解决问题，防清进度，无不良记录 
 // @author       unrival
 // @run-at       document-end
 // @storageName  unrivalxxt
@@ -32,7 +32,6 @@
 
 
 //安全网址请填写在上方空白区域
-// @downloadURL none
 // ==/UserScript==
 (() => {
 	var token = '', //关注微信公众号：一之哥哥，发送 “token” 领取你的token，填写在两个单引号中间并保存，可以提高答题并发数量。
@@ -651,10 +650,12 @@
 								'&playtime=' + playTime + '&duration=' + item['duration'] + '&objectid=' + item[
 									'objectId'] + '&jobid=' + item['jobid'] + '&uid=' + UID;
 							busyThread += 1;
-							let _bold_playTime = playTime;
-
+							let _bold_playTime = playTime,
+								strEc =
+									`[${classId}][${UID}][${item['jobid']}][${item['objectId']}][${playTime * 1000}][d_yHJ!$pdA~5][${item['duration'] * 1000}][0_${item['duration']}]`,
+								bakenc = jq.md5(strEc);
 							function ecOnload(res) {
-								let enc;
+								let enc='';
 								if (res) {
 									enc = res.responseText;
 									if (enc.includes('--#')) {
@@ -670,9 +671,7 @@
 									}
 								}
 								if(enc.length!=32){
-									let strEc =
-									`[${classId}][${UID}][${item['jobid']}][${item['objectId']}][${playTime * 1000}][d_yHJ!$pdA~5][${item['duration'] * 1000}][0_${item['duration']}]`;
-									enc = jq.md5(strEc);
+									enc = bakenc;
 								}
 								let reportsUrl = reportUrl + '/' + item['dtoken'] +
 									'?clazzId=' + classId + '&playingTime=' + _bold_playTime +
@@ -1564,7 +1563,7 @@
 			setTimeout(function() {
 				qu = questionList[i];
 				let param = 'question=' + encodeURIComponent(
-					qu['question'].replace(/(^\s*)|(\s*$)/g, ''));
+					qu['question']);
 				if (ctUrl.includes('icodef')) {
 					param += '&type=' + {
 						'单选题': '0',
