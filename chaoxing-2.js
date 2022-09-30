@@ -1,9 +1,9 @@
 // ==UserScript==
-// @name         🐤【超星网课小助手】【支持图片题】视频-章节测试|自动挂机|可多开不占网速|防清进度【用过都说好】
+// @name         超星学习通自动化脚本(Modified By Jacob D)
 // @namespace    unrival
-// @version      1.36
-// @description  ▶▶▶上次更新：2022.09.30◀◀◀⚠⚠⚠最近超星更新频繁，强烈建议使用近期更新的最新版脚本，防止出现异常⚠⚠⚠【✅独家题库实时更新】【💻可最小化💻】🆒支持超星视频、文档、答题、自定义正确率、掉线自动登录🤘取消视频文件加载，多开也不占用网速，放心追剧🍊自定义答题正确率，提高学习效率🍆每日功能测试，在发现问题前就解决问题，防清进度，无不良记录 
-// @author       unrival
+// @version      1.35(1.0)
+// @description  上次更新：2022.09.29
+// @author       unrival(Modified By Jacob D)
 // @run-at       document-end
 // @storageName  unrivalxxt
 // @match        *://*.chaoxing.com/*
@@ -28,18 +28,18 @@
 // @antifeature ads
 // @antifeature payment
 //如果脚本提示添加安全网址，请将脚本提示内容填写到下方区域，一行一个，如果不会，请加群询问
-
+//QQ交流群：929623059
 
 
 //安全网址请填写在上方空白区域
 // ==/UserScript==
 (() => {
-	var token = '', //关注微信公众号：一之哥哥，发送 “token” 领取你的token，填写在两个单引号中间并保存，可以提高答题并发数量。
+	var token = 'LzCBlsvyPfhxuBdv', //关注微信公众号：一之哥哥，发送 “token” 领取你的token，填写在两个单引号中间并保存，可以提高答题并发数量。
 		jumpType = 0, // 0:智能模式，1:遍历模式，2:不跳转，如果智能模式出现无限跳转/不跳转情况，请切换为遍历模式
 		disableMonitor = 0, // 0:无操作，1:解除多端学习监控，开启此功能后可以多端学习，不会被强制下线。
 		accuracy = 75, //章节测试正确率百分比，在答题正确率在规定之上并且允许自动提交时才会提交答案
-		randomDo = 0, //将0改为1，找不到答案的单选、多选、判断就会自动选【B、ABCD、错】，只在规定正确率不为100%时才生效
-		backGround = 0, //是否对接超星挂机小助手，需要先安装对应脚本
+		randomDo = 1, //将0改为1，找不到答案的单选、多选、判断就会自动选【B、ABCD、错】，只在规定正确率不为100%时才生效
+		backGround = 0, //是否对接超星学习通自动化脚本挂机，需要先安装对应脚本
 		//-----------------------------------------------------------------------------------------------------
 		autoLogin = 0, //掉线是否自动登录，1为自动登录，需要配置登录信息（仅支持手机号+密码登陆）
 		phoneNumber = '', //自动登录的手机号，填写在单引号之间。
@@ -172,7 +172,7 @@
 <html lang="en">
     <head>
         <meta charset="UTF-8">
-        <title>学习通小助手</title>
+        <title>超星学习通自动化脚本</title>
         <meta content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=0" name="viewport">
         <link href="https://z.chaoxing.com/yanshi/css/bootstrap.min.css" rel="stylesheet">
     </head>
@@ -180,7 +180,7 @@
         <div class="row" style="margin: 10px;">
             <div class="col-md-6 col-md-offset-3">
                 <div class="header clearfix">
-                    <h3 class="text-muted" style="margin-top: 20px;margin-bottom: 0;float: left;"><a href="https://scriptcat.org/script-show-page/336" target="view_window">学习通小助手v1.0&ensp;</a></h3><div id="onlineNum"></div>
+                    <h3 class="text-muted" style="margin-top: 20px;margin-bottom: 0;float: left;"><a href="https://scriptcat.org/script-show-page/336" target="view_window">超星学习通自动化脚本v1.0(Modified By Jacob D)&ensp;</a></h3><div id="onlineNum"></div>
                 </div>
                 <hr style="margin-top: 10px;margin-bottom: 20px;">
                 <div class="panel panel-info" id="normalQuery">
@@ -198,6 +198,8 @@
                                 <a id='videoTimeButton' class="btn btn-default">查看学习进度</a>
                                 &nbsp;|&nbsp;
                                 <a id='fuckMeModeButton' class="btn btn-default" href="https://scriptcat.org/script-show-page/379" target="view_window">后台挂机</a>
+                                <a id='refreshcurrentpage' class="btn btn-default">刷新当前页面</a>
+                                 &nbsp;|&nbsp;
                             </div><br>
                             <div style="padding: 0;font-size: 20px;float: left;">章节测试：</div>
                             <a id='autoDoWorkButton' class="btn btn-default">自动答题</a>&nbsp;|&nbsp;
@@ -288,7 +290,7 @@
 					try {
 						GM_xmlhttpRequest({
 							method: "get",
-							url: host + 'chaoXing/v2/ads.php',
+							/*url: host + 'chaoXing/v2/ads.php',
 							onload: function(res) {
 								if (res.responseText.includes('unrivaladson')) {
 									_d.getElementById('ads').innerHTML = res.responseText.replace(
@@ -296,7 +298,15 @@
 									_d.getElementById('ads').style.display = 'block';
 								}
 							}
-						});
+						});*/
+						    url: 'http://api.7j112.com/chaoXing/v1/onlineNum.php',
+                            onload: function(res) {
+                                if(res.responseText.includes('unviral')){
+                                    _d.getElementById('onlineNum').innerHTML='<h5 class="text-muted" style="margin-top: 30px;margin-bottom: 0;float: left;">当前在线-'+res.responseText.replace('unviral','')+'人</h5>';
+                                    _d.getElementById('onlineNum').innerHTML='<h5 class="text-muted" style="margin-top: 30px;margin-bottom: 0;float: left;">当前在线: '+res.responseText.replace('unviral','')+'人</h5>';
+                                }
+                            }
+                        })
 					} catch (e) {}
 					if (isMobile) {
 						logs.addLog('手机浏览器不保证能正常运行', 'red');
@@ -385,11 +395,16 @@
 							'//stat2-ans.chaoxing.com/task/s/index?courseid=' + courseId + '&clazzid=' +
 							classId;
 					}
+					 _d.getElementById('refreshcurrentpage').onclick=function(){
+                         window.setTimeout(function() {
+                             window.location.reload();
+                         },1000)
+                     }
 				}
 			}, 100),
 			loopjob = () => {
 				if (_w.top.unrivalScriptList.length > 1) {
-					logs.addLog('您同时开启了多个刷课脚本，会挂科，会挂科，会挂科，会挂科，会挂科，会挂科，会挂科，会挂科', 'red');
+					logs.addLog('您同时开启了多个刷课脚本，会挂科! 会挂科! 会挂科!', 'red');
 				}
 				if (cVersion < 8.6 * 10) {
 					logs.addLog(
@@ -583,7 +598,7 @@
 				if (allowBackground && backGround) {
 					if (_w.top.document.getElementsByClassName('catalog_points_sa').length > 0 || _w.top.document
 						.getElementsByClassName('lock').length > 0) {
-						logs.addLog('您已安装超星挂机小助手，但此课程可能为闯关模式，不支持后台挂机，将为您在线完成', 'blue');
+						logs.addLog('您已安装超星学习通自动化脚本挂机，但此课程可能为闯关模式，不支持后台挂机，将为您在线完成', 'blue');
 					} else {
 						item['userid'] = UID;
 						item['classId'] = classId;
@@ -592,7 +607,7 @@
 						GM_setValue('unrivalBackgroundVideo', item);
 						_d.cookie = "videojs_id=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/;";
 						logs.addLog(
-							'您已安装超星挂机小助手，已添加至后台任务，<a href="unrivalxxtbackground/" target="view_window">点我查看后台</a>',
+							'您已安装超星自动化脚本，已添加至后台任务，<a href="unrivalxxtbackground/" target="view_window">点我查看后台</a>',
 							'green');
 						missionList['m' + item['jobid']]['running'] = true;
 						setTimeout(function() {
@@ -605,7 +620,13 @@
 				let videojs_id = String(parseInt(Math.random() * 9999999));
 				_d.cookie = 'videojs_id=' + videojs_id + ';path=/'
 				logs.addLog('开始刷视频：' + item['name'] + '，倍速：' + String(rate) + '倍');
-				logs.addLog('视频观看信息每60秒上报一次，请耐心等待，脚本在正常运行，请不要在60秒内卸载脚本然后去评论脚本不能用，奶奶滴！', 'green');
+				logs.addLog('视频观看信息每6秒上报一次，请耐心等待，脚本在正常运行，请不要在6秒内卸载脚本!', 'green');
+				function disblaystudystatus() {
+                     logs.addLog('开始查询并显示学习进度','green');
+                     _d.getElementById('videoTime').style.display = 'block';
+                     _d.getElementById('videoTimeContent').src=_p+'//stat2-ans.chaoxing.com/task/s/index?courseid='+courseId+'&clazzid='+classId;
+                 }
+                 disblaystudystatus();
 				if (disableMonitor) {
 					logs.addLog('解除多端学习监控有清除进度风险，请谨慎使用', 'red');
 				}
@@ -635,12 +656,16 @@
 						}
 						playsTime += rate;
 						playTime = Math.ceil(playsTime);
-						if (times == 0 || times % 60 == 0 || playTime >= item['duration']) {
+						if (times == 0 || times % 6 == 0 || playTime >= item['duration']) {
 							if (first) {
 								playTime = 0;
 							}
 							if (playTime >= item['duration']) {
 								clearInterval(loop);
+								logs.addLog('5秒后自动刷新当前页面');
+                                window.setTimeout(function() {
+                                    window.location.reload();
+                                },5000)
 								playTime = item['duration'];
 								isdrag = '4';
 							} else if (playTime > 0) {
@@ -650,12 +675,10 @@
 								'&playtime=' + playTime + '&duration=' + item['duration'] + '&objectid=' + item[
 									'objectId'] + '&jobid=' + item['jobid'] + '&uid=' + UID;
 							busyThread += 1;
-							let _bold_playTime = playTime,
-								strEc =
-									`[${classId}][${UID}][${item['jobid']}][${item['objectId']}][${playTime * 1000}][d_yHJ!$pdA~5][${item['duration'] * 1000}][0_${item['duration']}]`,
-								bakenc = jq.md5(strEc);
+							let _bold_playTime = playTime;
+
 							function ecOnload(res) {
-								let enc='';
+								let enc;
 								if (res) {
 									enc = res.responseText;
 									if (enc.includes('--#')) {
@@ -671,7 +694,9 @@
 									}
 								}
 								if(enc.length!=32){
-									enc = bakenc;
+									let strEc =
+									`[${classId}][${UID}][${item['jobid']}][${item['objectId']}][${playTime * 1000}][d_yHJ!$pdA~5][${item['duration'] * 1000}][0_${item['duration']}]`;
+									enc = jq.md5(strEc);
 								}
 								let reportsUrl = reportUrl + '/' + item['dtoken'] +
 									'?clazzId=' + classId + '&playingTime=' + _bold_playTime +
@@ -743,10 +768,18 @@
 													'done'
 												] = true;
 												clearInterval(loop);
+                                                logs.addLog('5秒后自动刷新当前页面');
+                                                window.setTimeout(function() {
+                                                    window.location.reload();
+                                                },5000)
 											} else if (isdrag == '4') {
 												if (_w.top.unrivalReviewMode ==
 													'1') {
 													logs.addLog('视频已观看完毕', 'green');
+													logs.addLog('5秒后自动刷新当前页面');
+                                                    window.setTimeout(function() {
+                                                        window.location.reload();
+                                                    },5000)
 												} else {
 													logs.addLog('视频已观看完毕，但视频任务未完成',
 														'red');
@@ -762,6 +795,10 @@
 												} catch (e) {
 
 												}
+												logs.addLog('5秒后自动刷新当前页面');
+                                                window.setTimeout(function() {
+                                                    window.location.reload();
+                                                },5000)
 											} else {
 												logs.addLog(item['name'] + '已观看' +
 													_bold_playTime + '秒，剩余大约' +
@@ -1563,7 +1600,7 @@
 			setTimeout(function() {
 				qu = questionList[i];
 				let param = 'question=' + encodeURIComponent(
-					qu['question']);
+					qu['question'].replace(/(^\s*)|(\s*$)/g, ''));
 				if (ctUrl.includes('icodef')) {
 					param += '&type=' + {
 						'单选题': '0',
@@ -1663,7 +1700,7 @@
 <html lang="en">
     <head>
         <meta charset="UTF-8">
-        <title>学习通挂机小助手</title>
+        <title>超星学习通自动化脚本挂机</title>
         <meta content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=0" name="viewport">
         <link href="https://z.chaoxing.com/yanshi/css/bootstrap.min.css" rel="stylesheet">
     </head>
@@ -1671,7 +1708,7 @@
         <div class="row" style="margin: 10px;">
             <div class="col-md-6 col-md-offset-3">
                 <div class="header clearfix">
-                    <h3 class="text-muted" style="margin-top: 20px;margin-bottom: 0;float: left;">学习通挂机小助手&ensp;</h3>
+                    <h3 class="text-muted" style="margin-top: 20px;margin-bottom: 0;float: left;">超星学习通自动化脚本挂机&ensp;</h3>
                 </div>
                 <hr style="margin-top: 10px;margin-bottom: 20px;">
                 <div id="ads" class="panel panel-info" style="display: none;">
@@ -1742,13 +1779,13 @@
 		setInterval(function() {
 			if (Math.round(new Date() / 1000) - parseInt(GM_getValue('unrivalBackgroundVideoEnable', '6')) >
 				15) {
-				logs.addLog('超星挂机小助手可能运行异常，如页面无反应，请尝试重启脚本猫或重启浏览器(脚本猫0.9.0版本有此问题)');
+				logs.addLog('超星学习通自动化脚本挂机可能运行异常，如页面无反应，请尝试重启脚本猫或重启浏览器(脚本猫0.9.0版本有此问题)');
 			}
 		}, 10000);
 		var loopShow = () => {
 			let jobList = GM_getValue('unrivalBackgroundList', '1');
 			if (jobList == '1') {
-				_d.getElementById('joblist').innerHTML = '请将“超星挂机小助手”升级到最新版并重启浏览器';
+				_d.getElementById('joblist').innerHTML = '请将“超星学习通自动化脚本挂机”升级到最新版并重启浏览器';
 			} else {
 				try {
 					let jobHtml = '';
