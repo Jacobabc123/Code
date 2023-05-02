@@ -296,7 +296,7 @@
   </div>
 
   {include file='user/scripts.tpl'}
-  <script src="https://cdn.jsdelivr.net/npm/kjua@0.1.2/dist/kjua.min.js"></script>
+  <script src="https://fastly.jsdelivr.net/npm/kjua@0.1.2/dist/kjua.min.js"></script>
 
   <script>
     $('#top-up').click(function () {
