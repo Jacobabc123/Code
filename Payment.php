@@ -12,8 +12,7 @@ class MetronPay extends AbstractPayment
     {
         if ($telegram === 0) {
             $price = $request->getParam('price') ?? 0;
-            $pay_type = $request->getParam('type');
-            $type = isset(explode('_', $pay_type)[1]) ? explode('_', $pay_type)[1] : $request->getParam('type');
+            $type = $request->getParam('type');
             $client = $request->getParam('client');
             $paylist_id = (int)$request->getParam('paylist_id');
 
@@ -53,7 +52,7 @@ class MetronPay extends AbstractPayment
 
         if ($type == 'alipay') {
             # 支付宝
-            $payment_system = MetronSetting::get($pay_type);
+            $payment_system = MetronSetting::get('pay_alipay');
             if (MetronSetting::get('max_alipay_pay') != 'none' && MetronSetting::get('max_alipay_pay') != '' && MetronSetting::get('max_alipay_num') != 0 && $price >= MetronSetting::get('max_alipay_num')) {
                 $payment_system = MetronSetting::get('max_alipay_pay');
             }
@@ -80,23 +79,6 @@ class MetronPay extends AbstractPayment
                 case ('ZYGPay'):
                     $ZYGPay = new ZYGPay();
                     $result = $ZYGPay->MetronPay($type, $price, $shopinfo, $paylist_id);
-                    if ($result['errcode'] === 0) {
-                        $return = array(
-                            'ret' => 1,
-                            'type' => 'url',
-                            'tradeno' => $result['pid'],
-                            'url' => $result['url']
-                        );
-                    } else {
-                        $return = array(
-                            'ret' => 0,
-                            'msg' => $result['errmsg']
-                        );
-                    }
-                    return json_encode($return);
-                case ('ZYGPay_1'):
-                    $ZYGPay_1 = new ZYGPay_1();
-                    $result = $ZYGPay_1->MetronPay($type, $price, $shopinfo, $paylist_id);
                     if ($result['errcode'] === 0) {
                         $return = array(
                             'ret' => 1,
@@ -277,31 +259,36 @@ class MetronPay extends AbstractPayment
                         );
                     }
                     return json_encode($return);
+                case ('bitpayx'):
+                    $bitpayx = new BitPayX($_ENV['bitpay_secret']);
+                    $result = $bitpayx->MetronPay($type, $price, $shopinfo, $paylist_id);
+                    if ($result['ret'] === 1) {
+                        $return = [
+                            'ret' => 1,
+                            'msg' => '成功创建订单',
+                            'type' => 'url',
+                            'tradeno' => $result['tradeno'],
+                            'url' => $result['url']
+                        ];
+                    } else {
+                        $return = [
+                            'ret' => 0,
+                            'msg' => $result['msg']
+                        ];
+                    }
+                    return json_encode($return);
                 case ('stripe'):
                     $stripe = new StripePay();
                     $result = $stripe->MetronPay($type, $price, $shopinfo, $paylist_id);
+                    break;
+                case ('codepay'):
+                    $codepay = new Codepay();
+                    $result = $codepay->MetronPay($type, $price, $shopinfo, $paylist_id);
                     break;
                 case ('pcexpay'):
                     $pcexPay = new PcexPay();
                     $result = $pcexPay->MetronPay($type, $price, $shopinfo, $paylist_id);
                     break;
-                case ('vmq'):
-                    $vmq = new BobVmqPay();
-                    $result = $vmq->MetronPay($type, $price, $shopinfo, $paylist_id);
-                    if ($result['errcode'] === 0) {
-                        $return = array(
-                            'ret' => 1,
-                            'type' => 'qrcode',
-                            'tradeno' => $result['pid'],
-                            'url' => $result['url']
-                        );
-                    } else {
-                        $return = array(
-                            'ret' => 0,
-                            'msg' => $result['errmsg']
-                        );
-                    }
-                    return json_encode($return);
                 default:
                     $return = array(
                         'ret' => 0,
@@ -328,7 +315,7 @@ class MetronPay extends AbstractPayment
 
         } else if ($type == 'wxpay') {
             # 微信支付
-            $payment_system = MetronSetting::get($pay_type);
+            $payment_system = MetronSetting::get('pay_wxpay');
             if (MetronSetting::get('max_wxpay_pay') != 'none' && MetronSetting::get('max_wxpay_pay') != '' && MetronSetting::get('max_wxpay_num') != 0 && $price >= MetronSetting::get('max_wxpay_num')) {
                 $payment_system = MetronSetting::get('max_wxpay_pay');
             }
@@ -423,24 +410,7 @@ class MetronPay extends AbstractPayment
                             'msg' => $result['errmsg']
                         );
                     }
-                    return json_encode($return);
-                case ('ZYGPay_1'):
-                    $ZYGPay_1 = new ZYGPay_1();
-                    $result = $ZYGPay_1->MetronPay($type, $price, $shopinfo, $paylist_id);
-                    if ($result['errcode'] === 0) {
-                        $return = array(
-                            'ret' => 1,
-                            'type' => 'url',
-                            'tradeno' => $result['pid'],
-                            'url' => $result['url']
-                        );
-                    } else {
-                        $return = array(
-                            'ret' => 0,
-                            'msg' => $result['errmsg']
-                        );
-                    }
-                    return json_encode($return);
+                    return json_encode($return);    
                 case ('materialpay'):
                     $type = 'WXPAY';
                     $materialpay = new MaterialPay(Config::get('materialpay_secret'));
@@ -457,6 +427,24 @@ class MetronPay extends AbstractPayment
                             'ret' => 0,
                             'msg' => $result['errmsg']
                         );
+                    }
+                    return json_encode($return);
+                case ('bitpayx'):
+                    $bitpayx = new BitPayX($_ENV['bitpay_secret']);
+                    $result = $bitpayx->MetronPay($type, $price, $shopinfo, $paylist_id);
+                    if ($result['ret'] === 1) {
+                        $return = [
+                            'ret' => 1,
+                            'msg' => '成功创建订单',
+                            'type' => 'url',
+                            'tradeno' => $result['tradeno'],
+                            'url' => $result['url']
+                        ];
+                    } else {
+                        $return = [
+                            'ret' => 0,
+                            'msg' => $result['msg']
+                        ];
                     }
                     return json_encode($return);
                 case ('payjs'):
@@ -496,23 +484,25 @@ class MetronPay extends AbstractPayment
                         ];
                     }
                     return json_encode($return);
-                    case ('vmq'):
-                    $vmq = new BobVmqPay();
-                    $result = $vmq->MetronPay($type, $price, $shopinfo, $paylist_id);
-                    if ($result['errcode'] === 0) {
-                        $return = array(
+                case ('codepay'):
+                    $codepay = new Codepay();
+                    $result = $codepay->MetronPay($type, $price, $shopinfo, $paylist_id);
+                    if ($result['ret'] === 1) {
+                        $return = [
                             'ret' => 1,
-                            'type' => 'qrcode',
-                            'tradeno' => $result['pid'],
+                            'msg' => '成功创建订单',
+                            'type' => $result['type'],
+                            'tradeno' => $result['tradeno'],
                             'url' => $result['url']
-                        );
+                        ];
                     } else {
-                        $return = array(
+                        $return = [
                             'ret' => 0,
-                            'msg' => $result['errmsg']
-                        );
+                            'msg' => isset($result['msg']) ? $result['msg'] : '未知错误',
+                        ];
                     }
                     return json_encode($return);
+                    break;
                 default:
                     $return = array(
                         'ret' => 0,
@@ -600,22 +590,23 @@ class MetronPay extends AbstractPayment
                             'msg' => $result['errmsg']
                         );
                     }
-                    return json_encode($return);
-                case ('ZYGPay_1'):
-                    $ZYGPay_1 = new ZYGPay_1();
-                    $result = $ZYGPay_1->MetronPay($type, $price, $shopinfo, $paylist_id);
-                    if ($result['errcode'] === 0) {
-                        $return = array(
+                    return json_encode($return);    
+                case ('codepay'):
+                    $codepay = new Codepay();
+                    $result = $codepay->MetronPay($type, $price, $shopinfo, $paylist_id);
+                    if ($result['ret'] === 1) {
+                        $return = [
                             'ret' => 1,
-                            'type' => 'url',
-                            'tradeno' => $result['pid'],
+                            'msg' => '成功创建订单',
+                            'type' => $result['type'],
+                            'tradeno' => $result['tradeno'],
                             'url' => $result['url']
-                        );
+                        ];
                     } else {
-                        $return = array(
+                        $return = [
                             'ret' => 0,
-                            'msg' => $result['errmsg']
-                        );
+                            'msg' => isset($result['msg']) ? $result['msg'] : '未知错误',
+                        ];
                     }
                     return json_encode($return);
                 default:
@@ -625,25 +616,25 @@ class MetronPay extends AbstractPayment
                     );
                     return json_encode($return);
             }
-        }  else if ($type == 'crypto') {
-            # 数字货币支付
+        } else if ($type == 'crypto') {
+            # 数字货币
             $payment_system = MetronSetting::get('pay_crypto');
             switch ($payment_system) {
-                case ('bobpay'):
-                    $tron = new BobTronPay();
-                    $result = $tron->MetronPay($type, $price, $shopinfo, $paylist_id);
-                    if ($result['errcode'] == 0) {
-                        $return = array(
+                case ('bitpay'):
+                    $bitpay = new BitPay($_ENV['bitpay_secret']);
+                    $result = $bitpay->MetronPay($type, $price, $shopinfo, $paylist_id);
+                    if ($result['ret'] === 1) {
+                        $return = [
                             'ret' => 1,
                             'type' => 'url',
-                            'tradeno' => $result['pid'],
+                            'tradeno' => $result['tradeno'],
                             'url' => $result['url']
-                        );
+                        ];
                     } else {
-                        $return = array(
+                        $return = [
                             'ret' => 0,
-                            'msg' => $result['errmsg']
-                        );
+                            'msg' => $result['msg']
+                        ];
                     }
                     return json_encode($return);
                 default:
@@ -737,10 +728,6 @@ class MetronPay extends AbstractPayment
                     return "fail";
                 }
                 return "fail";
-            case ('vmq'):
-                $vmq = new BobVmqPay();
-                $vmq->notify($request, $response, $args);
-                return;
             case ('wolfpay'):
                 $wolfpay_notify = new wolfpay();
                 $wolfpay_notify->notify($request, $response, $args);
@@ -841,6 +828,14 @@ class MetronPay extends AbstractPayment
                     die('fail');
                 }
                 return;
+            case ('bitpay'):
+                $bitpay = new BitPay($_ENV['bitpay_secret']);
+                $bitpay->notify($request, $response, $args);
+                return;
+            case ('bitpayx'):
+                $bitpayx = new BitPayX($_ENV['bitpay_secret']);
+                $bitpayx->notify($request, $response, $args);
+                return;
             case ('payjs'):
                 $payjs = new PAYJS($_ENV['payjs_key']);
                 $payjs->notify($request, $response, $args);
@@ -893,6 +888,10 @@ class MetronPay extends AbstractPayment
                         exit();
                 }
                 return http_response_code(200);
+            case ('codepay'):
+                $codepay = new Codepay();
+                $codepay->notify($request, $response, $args);
+                return;
             case ('pcexpay'):
                 $pcexpay = new PcexPay();
                 $pcexpay->notify($request, $response, $args);
@@ -900,15 +899,7 @@ class MetronPay extends AbstractPayment
             case ('ZYGPay'):
                     $ZYGPay = new ZYGPay();
                     $result = $ZYGPay->notify($request, $response, $args);
-                    return;
-            case ('ZYGPay_1'):
-                    $ZYGPay_1 = new ZYGPay_1();
-                    $result = $ZYGPay_1->notify($request, $response, $args);
-                    return;
-            case ('bobpay'):
-                $tron = new BobTronPay();
-                $tron->notify($request, $response, $args);
-                return;
+                    return;    
             default:
                 return 'failed';
         }
