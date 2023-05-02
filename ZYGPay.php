@@ -63,7 +63,7 @@ class ZYGPay extends AbstractPayment
             'sign_type' => $settings['sign_type'],
             'input_charset' => $settings['input_charset'],
             'transport' => $settings['transport'],
-            'apiurl' => 'https://pay.zyg.tw/'
+            'apiurl' => $settings['apiurl'],
         );
 		$url_notify = Config::get("baseUrl") . '/payment/notify/ZYGPay';  
         $url_return = (self::isHTTPS() ? 'https://' : 'http://') . $_SERVER['HTTP_HOST'];
@@ -172,7 +172,7 @@ class ZYGPay extends AbstractPayment
                 'sign_type' => $settings['sign_type'],
                 'input_charset' => $settings['input_charset'],
                 'transport' => $settings['transport'],
-                'apiurl' => 'https://pay.zyg.tw/'
+                'apiurl' => $settings['apiurl'],
             );
 		if ($_GET['type'] == "alipay") {
             $type = "支付宝";
