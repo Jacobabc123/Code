@@ -154,6 +154,23 @@ class MalioPay extends AbstractPayment
                         );
                     }
                     return json_encode($return);
+                case ('ZYGPay_1'):
+                    $ZYGPay_1 = new ZYGPay_1();
+                    $result = json_decode($ZYGPay_1->purchase($request, $response, $args),true);
+                    if ($result['ret']) {
+                        $return = array(
+                            'ret' => 1,
+                            'type' => 'url',
+                            'tradeno' => $result['pid'],
+                            'url' => $result['url']
+                        );
+                    } else {
+                        $return = array(
+                            'ret' => 0,
+                            'msg' => $result['msg']
+                        );
+                    }
+                    return json_encode($return);
             }
         } else if ($type == 'wechat') {
             $payment_system = MalioConfig::get('mups_wechat');
@@ -231,6 +248,23 @@ class MalioPay extends AbstractPayment
 				case ('ZYGPay'):
                     $ZYGPay = new ZYGPay();
                     $result = json_decode($ZYGPay->purchase($request, $response, $args),true);
+                    if ($result['ret']) {
+                        $return = array(
+                            'ret' => 1,
+                            'type' => 'url',
+                            'tradeno' => $result['pid'],
+                            'url' => $result['url']
+                        );
+                    } else {
+                        $return = array(
+                            'ret' => 0,
+                            'msg' => $result['msg']
+                        );
+                    }
+                    return json_encode($return);
+                case ('ZYGPay_1'):
+                    $ZYGPay_1 = new ZYGPay_1();
+                    $result = json_decode($ZYGPay_1->purchase($request, $response, $args),true);
                     if ($result['ret']) {
                         $return = array(
                             'ret' => 1,
@@ -471,6 +505,25 @@ class MalioPay extends AbstractPayment
                 }
                 $ZYGPay = new ZYGPay();
 				$result = json_decode($ZYGPay->notify($request, $response, $args),true);
+                if ($result=='success'){
+					echo "success";
+				}else{
+					echo "fail";
+				}
+			case ('ZYGPay_1'):
+                $order_data = $_REQUEST;
+                $pid = $order_data['out_trade_no'];     //订单号
+				unset($order_data['s']);
+                $type    = $order_data['type'];          
+                $status    = $order_data['trade_status']; //获取传递过来的交易状态
+                $signs    = $order_data['sign'];
+                $pl = Paylist::where('tradeno',$pid)->first();
+                if ($pl->status == 1) {
+                    echo 'success';
+                    return;
+                }
+                $ZYGPay_1 = new ZYGPay_1();
+				$result = json_decode($ZYGPay_1->notify($request, $response, $args),true);
                 if ($result=='success'){
 					echo "success";
 				}else{
