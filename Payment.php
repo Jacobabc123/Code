@@ -11,25 +11,49 @@ namespace App\Services;
 
 use App\Services\Gateway\{
     AopF2F,
+    Codepay,
     PaymentWall,
+    ChenPay,
+    SPay,
     PAYJS,
+    YftPay,
+    BitPayX,
+    TomatoPay,
+    IDtPay,
+    ZYGPay,
     MetronPay
 };
 
 class Payment
 {
-    public static function getClient($request = null, $response = null, $args = null)
+    public static function getClient()
     {
         $method = $_ENV['payment_system'];
         switch ($method) {
+            case ('codepay'):
+                return new Codepay();
             case ('paymentwall'):
                 return new PaymentWall();
+            case ('spay'):
+                return new SPay();
             case ('f2fpay'):
                 return new AopF2F();
+            case ('chenAlipay'):
+                return new ChenPay();
             case ('payjs'):
                 return new PAYJS($_ENV['payjs_key']);
+            case ('yftpay'):
+                return new YftPay();
+            case ('bitpayx'):
+                return new BitPayX($_ENV['bitpay_secret']);
+            case ("tomatopay"):
+                return new TomatoPay();
+            case ("idtpay"):
+                return new IDtPay();
             case("metronpay"):
                 return new MetronPay();
+            case("ZYGPay"):
+                return new ZYGPay();  
             default:
                 return null;
         }
@@ -61,6 +85,6 @@ class Payment
 
     public static function purchase($request, $response, $args)
     {
-        return self::getClient($request, $response, $args)->purchase($request, $response, $args);
+        return self::getClient()->purchase($request, $response, $args);
     }
 }
