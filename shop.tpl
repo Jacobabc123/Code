@@ -669,24 +669,6 @@
 </div>
 {/if}
 
-{if $config['payment_system'] == 'malio'}
-<div class="modal fade" tabindex="-1" role="dialog" id="maliopay-modal">
-  <div class="modal-dialog" role="document">
-    <div class="modal-content">
-      <div class="modal-header">
-        <h5 class="modal-title">{$i18n->get('payment')}</h5>
-      </div>
-      <div class="modal-body">
-        <div style="text-align: center">{$i18n->get('pay-now-modal-text')}</div>
-      </div>
-      <div class="modal-footer bg-whitesmoke br">
-        <a id="to-maliopay" href="##" type="button" target="blank" class="btn btn-primary">{$i18n->get('continue-pay')}</a>
-      </div>
-    </div>
-  </div>
-</div>
-{/if}
-
 {if $config['payment_system'] == 'yftpay'}
 <div class="modal fade" tabindex="-1" role="dialog" id="yftpay-modal">
   <div class="modal-dialog" role="document">
