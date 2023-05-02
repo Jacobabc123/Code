@@ -17,6 +17,12 @@ class MalioPay extends AbstractPayment
     {
         $price = $request->getParam('price');
         $type = $request->getParam('type');
+        $shopid = $request->getParam('shopid');
+
+        if ($shopid == null) {
+            $shopid = 0;
+        }
+
         $user = Auth::getUser();
         if ($type != 'alipay' and $type != 'wechat') {
             return json_encode(['ret' => 0, 'msg' => 'wrong type']);
@@ -35,7 +41,7 @@ class MalioPay extends AbstractPayment
             switch ($payment_system) {
                 case ('bitpayx'):
                     $bitpayx = new BitPayX(Config::get('bitpay_secret'));
-                    $result = $bitpayx->purchase_maliopay($type, $price);
+                    $result = $bitpayx->purchase_maliopay($type, $price,$shopid);
                     if ($result['errcode'] == 0) {
                         $return = array(
                             'ret' => 1,
@@ -69,7 +75,7 @@ class MalioPay extends AbstractPayment
                     return json_encode($return);
                 case ('f2fpay'):
                     $f2fpay = new AopF2F();
-                    $result = $f2fpay->purchase_maliopay($type, $price);
+                    $result = $f2fpay->purchase_maliopay($type, $price,$shopid);
                     if ($result['errcode'] == 0) {
                         $return = array(
                             'ret' => 1,
@@ -86,7 +92,7 @@ class MalioPay extends AbstractPayment
                     return json_encode($return);
                 case ('stripe'):
                     $stripe = new StripePay();
-                    $result = $stripe->purchase_maliopay($type, $price);
+                    $result = $stripe->purchase_maliopay($type, $price,$shopid);
                     if ($result['errcode'] == 0) {
                         $return = array(
                             'ret' => 1,
@@ -103,7 +109,7 @@ class MalioPay extends AbstractPayment
                     return json_encode($return);
                 case ('wolfpay'):
                     $wolfpay = new Wolfpay();
-                    $result = $wolfpay->purchase_maliopay($type, $price);
+                    $result = $wolfpay->purchase_maliopay($type, $price,$shopid);
                     if ($result['errcode'] == 0) {
                         $return = array(
                             'ret' => 1,
@@ -120,54 +126,18 @@ class MalioPay extends AbstractPayment
                     return json_encode($return);
                 case ('materialpay'):
                     $materialpay = new MaterialPay(Config::get('materialpay_secret'));
-                    $result = json_decode($materialpay->purchase($request, $response, $args),true);
-                 
-                    if ($result['code'] == '200') {
+                    $result = $materialpay->purchase_maliopay($type, $price,$shopid);
+                    if ($result['errcode'] == 0) {
                         $return = array(
                             'ret' => 1,
                             'type' => 'url',
-                            'tradeno' => $result['result']['tradeNo'],
-                            'pid' => $result['pid'],
-                            'qrcode' => $result['result']['url']
-                        );
-                    } else {
-                        $return = array(
-                            'ret' => 0,
-                            'msg' => $result['msg']
-                        );
-                    }
-                    return json_encode($return);
-				case ('ZYGPay'):
-                    $ZYGPay = new ZYGPay();
-                    $result = json_decode($ZYGPay->purchase($request, $response, $args),true);
-                    if ($result['ret']) {
-                        $return = array(
-                            'ret' => 1,
-                            'type' => 'url',
-                            'tradeno' => $result['pid'],
+                            'tradeno' => $result['tradeno'],
                             'url' => $result['url']
                         );
                     } else {
                         $return = array(
                             'ret' => 0,
-                            'msg' => $result['msg']
-                        );
-                    }
-                    return json_encode($return);
-                case ('ZYGPay_1'):
-                    $ZYGPay_1 = new ZYGPay_1();
-                    $result = json_decode($ZYGPay_1->purchase($request, $response, $args),true);
-                    if ($result['ret']) {
-                        $return = array(
-                            'ret' => 1,
-                            'type' => 'url',
-                            'tradeno' => $result['pid'],
-                            'url' => $result['url']
-                        );
-                    } else {
-                        $return = array(
-                            'ret' => 0,
-                            'msg' => $result['msg']
+                            'msg' => $result['errmsg']
                         );
                     }
                     return json_encode($return);
@@ -177,7 +147,7 @@ class MalioPay extends AbstractPayment
             switch ($payment_system) {
                 case ('bitpayx'):
                     $bitpayx = new BitPayX(Config::get('bitpay_secret'));
-                    $result = $bitpayx->purchase_maliopay($type, $price);
+                    $result = $bitpayx->purchase_maliopay($type, $price,$shopid);
                     if ($result['errcode'] == 0) {
                         $return = array(
                             'ret' => 1,
@@ -211,7 +181,7 @@ class MalioPay extends AbstractPayment
                     return json_encode($return);
                 case ('stripe'):
                     $stripe = new StripePay();
-                    $result = $stripe->purchase_maliopay($type, $price);
+                    $result = $stripe->purchase_maliopay($type, $price,$shopid);
                     if ($result['errcode'] == 0) {
                         $return = array(
                             'ret' => 1,
@@ -228,54 +198,18 @@ class MalioPay extends AbstractPayment
                     return json_encode($return);
                 case ('materialpay'):
                     $materialpay = new MaterialPay(Config::get('materialpay_secret'));
-                    $result = json_decode($materialpay->purchase($request, $response, $args),true);
-                 
-                    if ($result['code'] == '200') {
+                    $result = $materialpay->purchase_maliopay($type, $price,$shopid);
+                    if ($result['errcode'] == 0) {
                         $return = array(
                             'ret' => 1,
-                            'type' => 'url',
-                            'tradeno' => $result['result']['tradeNo'],
-                            'pid' => $result['pid'],
-                            'qrcode' => $result['result']['url']
-                        );
-                    } else {
-                        $return = array(
-                            'ret' => 0,
-                            'msg' => $result['msg']
-                        );
-                    }
-                    return json_encode($return);
-				case ('ZYGPay'):
-                    $ZYGPay = new ZYGPay();
-                    $result = json_decode($ZYGPay->purchase($request, $response, $args),true);
-                    if ($result['ret']) {
-                        $return = array(
-                            'ret' => 1,
-                            'type' => 'url',
-                            'tradeno' => $result['pid'],
+                            'type' => 'qrcode',
+                            'tradeno' => $result['tradeno'],
                             'url' => $result['url']
                         );
                     } else {
                         $return = array(
                             'ret' => 0,
-                            'msg' => $result['msg']
-                        );
-                    }
-                    return json_encode($return);
-                case ('ZYGPay_1'):
-                    $ZYGPay_1 = new ZYGPay_1();
-                    $result = json_decode($ZYGPay_1->purchase($request, $response, $args),true);
-                    if ($result['ret']) {
-                        $return = array(
-                            'ret' => 1,
-                            'type' => 'url',
-                            'tradeno' => $result['pid'],
-                            'url' => $result['url']
-                        );
-                    } else {
-                        $return = array(
-                            'ret' => 0,
-                            'msg' => $result['msg']
+                            'msg' => $result['errmsg']
                         );
                     }
                     return json_encode($return);
@@ -314,7 +248,7 @@ class MalioPay extends AbstractPayment
                 $resultVerify = $bitpayx->verify($str_to_sign, $inputJSON['token']);
                 $isPaid = $data !== null && $data['status'] !== null && $data['status'] === 'PAID';
                 if ($resultVerify && $isPaid) {
-                    $this->postPayment($data['merchant_order_id'], '在线支付 ' . $data['merchant_order_id']);
+                    $bitpayx->postPaymentMaliopay($data['merchant_order_id'], '在线支付 ' . $data['merchant_order_id']);
                     // echo 'SUCCESS';
                     $return = [];
                     $return['status'] = 200;
@@ -357,7 +291,7 @@ class MalioPay extends AbstractPayment
                     $p = Paylist::where('tradeno', '=', $order_data['out_trade_no'])->first();
                     $money = $p->total;
                     if ($p->status != 1) {
-                        $this->postPayment($order_data['out_trade_no'], "在线支付");
+                        $this->postPaymentMaliopay($order_data['out_trade_no'], "在线支付");
                         echo 'SUCCESS';
                     } else {
                         echo 'ERROR';
@@ -383,7 +317,7 @@ class MalioPay extends AbstractPayment
                 $aliResponse = $aliRequest->send();
                 $pid = $aliResponse->data('out_trade_no');
                 if ($aliResponse->isPaid()) {
-                    $this->postPayment($pid, '支付宝');
+                    $this->postPaymentMaliopay($pid, '支付宝');
                     die('success'); //The response should be 'success' only
                 }
                 return 'f2fpay';
@@ -425,7 +359,7 @@ class MalioPay extends AbstractPayment
                             }
                             $order = Paylist::where('tradeno', '=', $source['id'])->first();
                             if ($order->status != 1) {
-                                $this->postPayment($source['id'], 'Stripe '.$type);
+                                $this->postPaymentMaliopay($source['id'], 'Stripe '.$type);
                                 echo 'SUCCESS';
                             } else {
                                 echo 'ERROR';
@@ -456,7 +390,7 @@ class MalioPay extends AbstractPayment
                     if ($wolfpay->verify($data)) {
                         //验证支付状态
                         if ($data['trade_status'] == 'TRADE_SUCCESS') {
-                            $this->postPayment($data['out_trade_no'], "在线支付");
+                            $wolfpay->postPaymentMaliopay($data['out_trade_no'], "在线支付");
                             echo "success";
                             header("Location: /user/code");
                         }
@@ -484,51 +418,13 @@ class MalioPay extends AbstractPayment
                 // 验证签名
                 $resultVerify = $materialpay->verify($str_to_sign, $request->getParam('sign'));
                 if ($resultVerify) {
-                    $this->postPayment($data['outTradeNo'], 'MaterialPay - ' . $data['outTradeNo']);
+                    $materialpay->postPaymentMaliopay($data['outTradeNo'], 'MaterialPay - ' . $data['outTradeNo']);
                     echo 'success';
                     return;
                 } else {
                     echo 'fail';
                     return;
                 }
-			case ('ZYGPay'):
-                $order_data = $_REQUEST;
-                $pid = $order_data['out_trade_no'];     //订单号
-				unset($order_data['s']);
-                $type    = $order_data['type'];          
-                $status    = $order_data['trade_status']; //获取传递过来的交易状态
-                $signs    = $order_data['sign'];
-                $pl = Paylist::where('tradeno',$pid)->first();
-                if ($pl->status == 1) {
-                    echo 'success';
-                    return;
-                }
-                $ZYGPay = new ZYGPay();
-				$result = json_decode($ZYGPay->notify($request, $response, $args),true);
-                if ($result=='success'){
-					echo "success";
-				}else{
-					echo "fail";
-				}
-			case ('ZYGPay_1'):
-                $order_data = $_REQUEST;
-                $pid = $order_data['out_trade_no'];     //订单号
-				unset($order_data['s']);
-                $type    = $order_data['type'];          
-                $status    = $order_data['trade_status']; //获取传递过来的交易状态
-                $signs    = $order_data['sign'];
-                $pl = Paylist::where('tradeno',$pid)->first();
-                if ($pl->status == 1) {
-                    echo 'success';
-                    return;
-                }
-                $ZYGPay_1 = new ZYGPay_1();
-				$result = json_decode($ZYGPay_1->notify($request, $response, $args),true);
-                if ($result=='success'){
-					echo "success";
-				}else{
-					echo "fail";
-				}
             default:
                 return 'failed';
         }
@@ -561,7 +457,6 @@ class MalioPay extends AbstractPayment
     public function getStatus($request, $response, $args)
     {
         $p = Paylist::where('tradeno', $_POST['tradeno'])->first();
-        
         $return['ret'] = 1;
         $return['result'] = $p->status;
         return json_encode($return);
