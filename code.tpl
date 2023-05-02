@@ -248,7 +248,7 @@
                               <span class="selectgroup-button selectgroup-button-icon"><i class="fab fa-btc mr-1"></i>{$i18n->get('cryptocurrency')}</span>
                             </label>
                             {/if}
-                            {if $config['payment_system'] == 'codepay' || $config['payment_system'] == 'flyfoxpay' || $config['payment_system'] == 'ZYGPay'}
+                            {if $config['payment_system'] == 'codepay' || $config['payment_system'] == 'flyfoxpay'}
                             <label class="selectgroup-item">
                               <input type="radio" name="payment" value="qqpay" class="selectgroup-input qqpay">
                               <span class="selectgroup-button selectgroup-button-icon"><i class="fab fa-qq mr-1"></i>{$i18n->get('qq-wallet')}</span>
@@ -290,7 +290,7 @@
           </div>
         </section>
       </div>
-{include file='../dialog.tpl'}
+
       {include file='user/footer.tpl'}
     </div>
   </div>
@@ -307,17 +307,13 @@
       $('#topup-page').hide();
       $('#main-page').show();
     })
-    {if $malio_config['mups_alipay'] == 'materialpay'}
-    var paymentSystem = "materialpay";
-    {else}
     var paymentSystem = "{$config['payment_system']}";
-    {/if}
     $('#topup-confirm').click(function () {
       walletTopup($('input:radio:checked').val());
     })
   </script>
 
-  {if $config['payment_system'] == 'f2fpay' || $config['payment_system'] == 'f2fpay_payjs' || $malio_config['mups_alipay'] == 'materialpay'}
+  {if $config['payment_system'] == 'f2fpay' || $config['payment_system'] == 'f2fpay_payjs'}
   <div class="modal fade" tabindex="-1" role="dialog" id="f2fpay-modal">
     <div class="modal-dialog" role="document">
       <div class="modal-content">
