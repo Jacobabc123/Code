@@ -7,9 +7,9 @@ use App\Models\Paylist;
 use App\Services\Config;
 use App\Services\View;
 
-require_once("RemPay/epay_submit.class.php");
-require_once("RemPay/epay_notify.class.php");
-class RemPay extends AbstractPayment
+require_once("ZYGPay/epay_submit.class.php");
+require_once("ZYGPay/epay_notify.class.php");
+class ZYGPay extends AbstractPayment
 {
 	function isHTTPS()
     {
@@ -43,7 +43,7 @@ class RemPay extends AbstractPayment
                 $type = 'alipay';
                 break;
         }
-        $settings = Config::get("RemPay");
+        $settings = Config::get("ZYGPay");
         if ($price < $settings['min_price']) {
 			$return['ret'] = 0;
 			$return['msg'] = "金额低于".$settings['min_price'].'元';
@@ -63,17 +63,16 @@ class RemPay extends AbstractPayment
             'sign_type' => $settings['sign_type'],
             'input_charset' => $settings['input_charset'],
             'transport' => $settings['transport'],
-            'apiurl' => 'https://www.rempay.net/'
+            'apiurl' => $settings['apiurl']
         );
-		$url_notify = Config::get("baseUrl") . '/payment/notify/RemPay';  
+		$url_notify = Config::get("baseUrl") . '/payment/notify/ZYGPay';  
         $url_return = (self::isHTTPS() ? 'https://' : 'http://') . $_SERVER['HTTP_HOST'];
 		
         /**************************请求参数**************************/
         //商户订单号
         $out_trade_no = $pl->tradeno;
         //商品名称
-        //商品名称改为订单号 $name = $settings["subjects"];
-		$name = $pl->tradeno;
+        $name = $settings["subjects"];
         //付款金额
         $money = (float)$price;
         //站点名称
@@ -114,7 +113,7 @@ class RemPay extends AbstractPayment
         	
             $success = 1;
         } else {
-            $settings = Config::get("RemPay");
+            $settings = Config::get("ZYGPay");
             $alipay_config = array(
                 'partner' => $settings['partner'],
                 'key' => $settings['key'],
@@ -130,7 +129,7 @@ class RemPay extends AbstractPayment
         }elseif($_GET['type'] == "qqpay") {
         	$type = "QQ支付";
         }else{
-        	$type = "RemPay";
+        	$type = "ZYGPay";
         }
             //计算得出通知验证结果
             $alipayNotify = new AlipayNotify($alipay_config);
@@ -166,14 +165,14 @@ class RemPay extends AbstractPayment
         if ($p->status == 1) {
             $success = 1;
         } else {
-            $settings = Config::get("RemPay");
+            $settings = Config::get("ZYGPay");
             $alipay_config = array(
                 'partner' => $settings['partner'],
                 'key' => $settings['key'],
                 'sign_type' => $settings['sign_type'],
                 'input_charset' => $settings['input_charset'],
                 'transport' => $settings['transport'],
-                'apiurl' => 'https://checkout.aimtechqld.co/'
+                'apiurl' => $settings['apiurl']
             );
 		if ($_GET['type'] == "alipay") {
             $type = "支付宝";
@@ -182,7 +181,7 @@ class RemPay extends AbstractPayment
         }elseif($_GET['type'] == "qqpay") {
         	$type = "QQ支付";
         }else{
-        	$type = "RemPay";
+        	$type = "ZYGPay";
         }
             //计算得出通知验证结果
             $alipayNotify = new AlipayNotify($alipay_config);
@@ -239,7 +238,7 @@ class RemPay extends AbstractPayment
                                     </div>
                                     <div class="card-action">
                                         <div class="card-action-btn pull-left">
-                                            <button class="btn btn-primary submit-amounth" id="RemPay" >充值</NOtton>
+                                            <button class="btn btn-primary submit-amounth" id="ZYGPaypay" >充值</NOtton>
                                         </div>
                                     </div>
                                     
