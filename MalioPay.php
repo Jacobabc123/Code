@@ -137,9 +137,9 @@ class MalioPay extends AbstractPayment
                         );
                     }
                     return json_encode($return);
-				case ('RemPay'):
-                    $RemPay = new RemPay();
-                    $result = json_decode($RemPay->purchase($request, $response, $args),true);
+				case ('ZYGPay'):
+                    $ZYGPay = new ZYGPay();
+                    $result = json_decode($ZYGPay->purchase($request, $response, $args),true);
                     if ($result['ret']) {
                         $return = array(
                             'ret' => 1,
@@ -228,9 +228,9 @@ class MalioPay extends AbstractPayment
                         );
                     }
                     return json_encode($return);
-				case ('RemPay'):
-                    $RemPay = new RemPay();
-                    $result = json_decode($RemPay->purchase($request, $response, $args),true);
+				case ('ZYGPay'):
+                    $ZYGPay = new ZYGPay();
+                    $result = json_decode($ZYGPay->purchase($request, $response, $args),true);
                     if ($result['ret']) {
                         $return = array(
                             'ret' => 1,
@@ -457,7 +457,7 @@ class MalioPay extends AbstractPayment
                     echo 'fail';
                     return;
                 }
-			case ('RemPay'):
+			case ('ZYGPay'):
                 $order_data = $_REQUEST;
                 $pid = $order_data['out_trade_no'];     //订单号
 				unset($order_data['s']);
@@ -469,8 +469,8 @@ class MalioPay extends AbstractPayment
                     echo 'success';
                     return;
                 }
-                $RemPay = new RemPay();
-				$result = json_decode($RemPay->notify($request, $response, $args),true);
+                $ZYGPay = new ZYGPay();
+				$result = json_decode($ZYGPay->notify($request, $response, $args),true);
                 if ($result=='success'){
 					echo "success";
 				}else{
